@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+App -> CreateProviderCommandHandler++ :  new CreateProviderCommandHandler
+
+CreateProviderCommandHandler -> providerRepository++:  handle(new CreateProvider)
+providerRepository -> providerRepository : new Provider()
+providerRepository -> providerRepository : add(provider)
+return
+CreateProviderCommandHandler --> EventDispatcher :
+activate EventDispatcher
+
+EventDispatcher -> CreateProviderEvent : dispatch()
+CreateProviderEvent -> CreateProviderEvent : new ProviderEvent(providerId)
+CreateProviderEvent -> EventDispatcher : Application Event
+deactivate CreateProviderEvent
+EventDispatcher -> CreateProviderCommandHandler
+CreateProviderCommandHandler -> App : Done : providerId
+deactivate CreateProviderCommandHandler
+@enduml
